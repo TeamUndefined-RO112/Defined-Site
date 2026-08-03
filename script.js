@@ -227,6 +227,13 @@ const revealSelectors = [
   '.what-section .section-title',
   '.what-section .section-desc',
   '.pillar',
+  '.action-concept-section .section-label',
+  '.action-concept-section .section-title',
+  '.action-concept-section .section-desc',
+  '.cycle-card',
+  '.kind-card',
+  '.runner-card',
+  '.mode-card',
   '.features-section .section-label',
   '.features-section .section-title',
   '.feature-card',
@@ -276,6 +283,39 @@ document.querySelectorAll('.util-card').forEach((el, i) => {
 document.querySelectorAll('.step').forEach((el, i) => {
   el.style.transitionDelay = `${i * 100}ms`;
 });
+
+
+/* ═══════════════════════════════════════════════
+   EXAMPLES — tab switching
+   Arrow keys move between tabs, as expected of a tablist
+═══════════════════════════════════════════════ */
+(function () {
+  const tabs = Array.from(document.querySelectorAll('.ex-tab'));
+  if (!tabs.length) return;
+
+  function select(tab) {
+    tabs.forEach(t => {
+      const isActive = t === tab;
+      const panel = document.getElementById('ex-panel-' + t.dataset.panel);
+
+      t.classList.toggle('ex-tab-active', isActive);
+      t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      if (panel) panel.hidden = !isActive;
+    });
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => select(tab));
+
+    tab.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+      next.focus();
+      select(next);
+    });
+  });
+})();
 
 
 /* ═══════════════════════════════════════════════

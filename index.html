@@ -37,9 +37,11 @@
         <span class="logo-bracket">[</span>Defined<span class="logo-bracket">]</span>
       </a>
       <div class="nav-links">
+        <a href="#what-action" class="nav-link">Actions 101</a>
         <a href="#features"   class="nav-link">Features</a>
         <a href="#actions"    class="nav-link">Actions</a>
         <a href="#utilities"  class="nav-link">Utilities</a>
+        <a href="#examples"   class="nav-link">Examples</a>
         <a href="#setup"      class="nav-link">Setup</a>
         <a href="https://github.com/Stfy-y/defined-quickstart" target="_blank" rel="noopener" class="btn btn-outline btn-sm" id="nav-github-btn">
           <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
@@ -54,9 +56,11 @@
 
   <!-- Mobile menu -->
   <div class="mobile-menu" id="mobile-menu">
+    <a href="#what-action" class="mobile-link">Actions 101</a>
     <a href="#features"  class="mobile-link">Features</a>
     <a href="#actions"   class="mobile-link">Actions</a>
     <a href="#utilities" class="mobile-link">Utilities</a>
+    <a href="#examples"  class="mobile-link">Examples</a>
     <a href="#setup"     class="mobile-link">Setup</a>
     <a href="https://github.com/Stfy-y/defined-quickstart" target="_blank" rel="noopener" class="mobile-link mobile-link-accent">View on GitHub →</a>
   </div>
@@ -139,6 +143,113 @@
             <strong class="pillar-head">Performance Tools</strong>
             <span class="pillar-text">Section profiling, system monitoring, I2C scheduling, and background-threaded telemetry out of the box.</span>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WHAT IS AN ACTION ─── -->
+  <section class="action-concept-section" id="what-action">
+    <div class="container">
+      <div class="section-label">The core idea</div>
+      <h2 class="section-title">What is an <span class="accent">Action</span>?</h2>
+      <p class="section-desc">
+        An action is one job your robot is doing — driving to a target, spinning up the flywheel, pulling in a ball. The important part: an action doesn't stop everything else while it runs. It moves forward a little bit on every cycle of the robot loop, so many actions make progress at the same time.
+      </p>
+
+      <div class="cycle-card">
+        <div class="cycle-head">
+          <span class="cycle-title">One loop. Many actions moving.</span>
+          <span class="cycle-note">the robot loops ~50&times; per second</span>
+        </div>
+        <div class="cycle-lanes">
+          <div class="lane">
+            <div class="lane-meta">
+              <span class="lane-name">flywheel_monitor</span>
+              <span class="lane-badge lane-badge-mon">Monitor</span>
+            </div>
+            <div class="lane-ticks"><span class="tick tick-mon"></span><span class="tick tick-mon"></span><span class="tick tick-mon"></span><span class="tick tick-mon"></span><span class="tick tick-mon"></span><span class="tick tick-mon"></span><span class="tick tick-mon"></span><span class="tick tick-mon"></span><span class="tick tick-mon"></span><span class="tick tick-mon"></span></div>
+            <span class="lane-note">never stops</span>
+          </div>
+          <div class="lane">
+            <div class="lane-meta">
+              <span class="lane-name">drive_to_goal</span>
+              <span class="lane-badge">Action</span>
+            </div>
+            <div class="lane-ticks"><span class="tick tick-on"></span><span class="tick tick-on"></span><span class="tick tick-on"></span><span class="tick tick-on"></span><span class="tick tick-on"></span><span class="tick tick-on"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span></div>
+            <span class="lane-note">finishes, then frees the wheels</span>
+          </div>
+          <div class="lane">
+            <div class="lane-meta">
+              <span class="lane-name">smart_intake</span>
+              <span class="lane-badge">Action</span>
+            </div>
+            <div class="lane-ticks"><span class="tick"></span><span class="tick"></span><span class="tick"></span><span class="tick tick-on"></span><span class="tick tick-on"></span><span class="tick tick-on"></span><span class="tick tick-on"></span><span class="tick tick-on"></span><span class="tick tick-on"></span><span class="tick tick-on"></span></div>
+            <span class="lane-note">starts partway through</span>
+          </div>
+        </div>
+        <p class="cycle-legend">
+          Each square is one cycle of the robot loop. The flywheel monitor never stops. Driving finishes after six cycles and lets go of the wheels. Intake starts partway through and keeps going — and none of them wait for the others.
+        </p>
+      </div>
+
+      <p class="kind-intro">
+        There's only <strong>one type</strong> in the library — <code>Action</code>. What changes is how you hand it to the Runner.
+      </p>
+
+      <div class="kind-grid">
+        <div class="kind-card">
+          <div class="kind-tag kind-tag-mon">runner.addMonitor()</div>
+          <h3 class="kind-head">Monitors</h3>
+          <p class="kind-text">
+            Hand an action to <code>addMonitor()</code> and it becomes a monitor: it runs every single cycle, for the whole match, and never finishes on its own. <em>Keep the flywheel spinning. Rumble the gamepad when a ball drops in.</em> Register it once at startup and forget about it.
+          </p>
+          <p class="kind-text">
+            Monitors run <strong>first</strong> each cycle, before everything else, so they can jump in and override what the robot is doing.
+          </p>
+        </div>
+        <div class="kind-card">
+          <div class="kind-tag">runner.startGroup()</div>
+          <h3 class="kind-head">Triggered actions</h3>
+          <p class="kind-text">
+            Everything else goes through <code>startGroup()</code>: it does a job and ends. <em>Drive to the corner. Intake three balls.</em> These claim the subsystems they need, can be chained one after another, run side by side, or given a timeout and a backup plan for when something goes wrong.
+          </p>
+          <p class="kind-text">
+            Because they claim subsystems, these are the ones the Runner can cancel and replace.
+          </p>
+        </div>
+      </div>
+
+      <div class="runner-card">
+        <div class="runner-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 8l7-5 7 5"/><path d="M19 16l-7 5-7-5"/></svg>
+        </div>
+        <div>
+          <h3 class="runner-head">The Runner stops actions from fighting</h3>
+          <p class="runner-text">
+            Two actions must never grab the same motor at the same moment. So every action says what it needs up front — <code>.requires(ActionSlot.INTAKE)</code>.
+          </p>
+          <p class="runner-text">
+            When a new action asks for a subsystem that's already busy, the Runner <strong>cancels the old one</strong>, lets it clean up after itself, and hands the subsystem over. Newest request wins. You never write that bookkeeping yourself — you just declare what you need.
+          </p>
+        </div>
+      </div>
+
+      <div class="mode-grid">
+        <div class="mode-card">
+          <h3 class="mode-head"><span class="mode-dot"></span>In Autonomous</h3>
+          <p class="mode-text">
+            You build one long chain of actions ahead of time and let it run — drive, shoot, fetch, park. Monitors run alongside it the entire time, keeping the flywheel ready and watching for trouble.
+          </p>
+        </div>
+        <div class="mode-card">
+          <h3 class="mode-head"><span class="mode-dot"></span>In TeleOp</h3>
+          <p class="mode-text">
+            The same (reused!) actions bind to gamepad buttons. One press can fire a whole chain — <em>go to the goal, line up, shoot</em> — while the driver keeps steering.
+          </p>
+          <p class="mode-text">
+            And you can bind a <strong>panic button</strong>: one press cancels every running action at once so the driver takes back full manual control. Monitors keep running on purpose — safety behaviour should never switch itself off.
+          </p>
         </div>
       </div>
     </div>
@@ -568,6 +679,169 @@
         <a href="https://github.com/cstahie/defined/tree/main/docs" target="_blank" rel="noopener" class="btn btn-ghost btn-xl" id="cta-docs-btn">
           Read the Docs →
         </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── EXAMPLES ─── -->
+  <section class="examples-section" id="examples">
+    <div class="container">
+      <div class="section-label">From the field</div>
+      <h2 class="section-title">Real code from<br /><span class="accent">a real robot</span></h2>
+      <p class="section-desc">
+        Every snippet below is running (simplified :P) on Team Undefined's award winning competition robot — not a toy demo.
+      </p>
+
+      <div class="ex-tabs" role="tablist" aria-label="Code examples">
+        <button class="ex-tab ex-tab-active" id="ex-tab-monitors" role="tab" aria-selected="true" aria-controls="ex-panel-monitors" data-panel="monitors" type="button">Register a monitor</button>
+        <button class="ex-tab" id="ex-tab-continuous" role="tab" aria-selected="false" aria-controls="ex-panel-continuous" data-panel="continuous" type="button">Write the monitor</button>
+        <button class="ex-tab" id="ex-tab-auto" role="tab" aria-selected="false" aria-controls="ex-panel-auto" data-panel="auto" type="button">Compose a routine</button>
+        <button class="ex-tab" id="ex-tab-fetch" role="tab" aria-selected="false" aria-controls="ex-panel-fetch" data-panel="fetch" type="button">Handle failure</button>
+        <button class="ex-tab" id="ex-tab-intake" role="tab" aria-selected="false" aria-controls="ex-panel-intake" data-panel="intake" type="button">Reserve subsystems</button>
+      </div>
+
+      <div class="ex-panels">
+        <div class="ex-panel ex-panel-active" id="ex-panel-monitors" role="tabpanel" aria-labelledby="ex-tab-monitors">
+          <p class="ex-caption">One line hands a behaviour to the runner. It now runs every loop, forever, without you touching it again.</p>
+          <div class="code-window">
+            <div class="code-toolbar">
+              <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+              <span class="code-filename">MainTeleOp.java</span>
+            </div>
+            <pre class="code-body"><code><span class="ck">public</span> <span class="ck">class</span> <span class="cn">MainTeleOp</span> <span class="ck">extends</span> <span class="cn">BaseOpMode</span> {
+    <span class="ck">public</span> <span class="ck">void</span> <span class="cf">addMonitors</span>() {
+        <span class="cc">// Keep flywheel on.</span>
+        <span class="ck">if</span> (<span class="cn">Config</span>.<span class="cn">Flywheel</span>.<span class="cs">ALWAYS_ON</span>) {
+            runner.<span class="cf">addMonitor</span>(<span class="cn">FlywheelActions</span>.<span class="cf">flywheelAlwaysOn</span>(robot));
+        }
+    }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="ex-panel" id="ex-panel-continuous" role="tabpanel" aria-labelledby="ex-tab-continuous" hidden>
+          <p class="ex-caption"><code>Continuous.forever</code> runs every cycle for the life of the OpMode. The guard clause is ordinary Java — no state machine required.</p>
+          <div class="code-window">
+            <div class="code-toolbar">
+              <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+              <span class="code-filename">FlywheelActions.java</span>
+            </div>
+            <pre class="code-body"><code><span class="ck">public</span> <span class="ck">class</span> <span class="cn">FlywheelActions</span> {
+    <span class="ck">public</span> <span class="ck">static</span> <span class="cn">Action</span> <span class="cf">flywheelAlwaysOn</span>(<span class="cn">Robot</span> r) {
+        <span class="ck">return</span> <span class="cn">Continuous</span>.<span class="cf">forever</span>(<span class="cs">&quot;flywheel_monitor&quot;</span>, now -&gt; {
+            <span class="cc">// Just keep the wheel enabled; updateFlywheelPolicy() picks the</span>
+            <span class="cc">// target each loop. Don&#x27;t run while the climbing jack is extended.</span>
+            <span class="ck">if</span> ((!r.flywheel.enabled || r.flywheel.currentState == <span class="cs">IDLE</span>)
+                    &amp;&amp; !r.jack.isExtended) {
+                r.flywheel.<span class="cf">startFlywheelSync</span>();
+            }
+        });
+    }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="ex-panel" id="ex-panel-auto" role="tabpanel" aria-labelledby="ex-tab-auto" hidden>
+          <p class="ex-caption"><code>ParallelAction.any</code> races the script against the flywheel monitor. Whichever finishes first ends the block.</p>
+          <div class="code-window">
+            <div class="code-toolbar">
+              <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+              <span class="code-filename">AutonomyActions.java</span>
+            </div>
+            <pre class="code-body"><code><span class="ck">public</span> <span class="ck">static</span> <span class="cn">Action</span> <span class="cf">autonomousRoutine</span>(<span class="cn">Robot</span> r) {
+    <span class="cn">List</span>&lt;<span class="cn">Action</span>&gt; sequence = <span class="ck">new</span> <span class="cn">ArrayList</span>&lt;&gt;();
+    <span class="cn">Config</span>.<span class="cn">StartPosition</span> startPos = <span class="cn">Config</span>.startPosition;
+
+    sequence.<span class="cf">add</span>(
+        <span class="cn">ParallelAction</span>.<span class="cf">any</span>(<span class="cs">&quot;autonomy&quot;</span>,
+            <span class="cc">// start the script</span>
+            startPos == <span class="cn">Config</span>.<span class="cn">StartPosition</span>.<span class="cs">FAR</span> ? <span class="cf">farSideScript</span>(r) : <span class="cf">nearSideScript</span>(r),
+            <span class="cc">// keep the flywheel always on</span>
+            <span class="cn">FlywheelActions</span>.<span class="cf">flywheelAlwaysOn</span>(r)
+        )
+    );
+
+    sequence.<span class="cf">add</span>(<span class="cn">Action</span>.<span class="cf">oneShot</span>(<span class="cs">&quot;stop_flywheel&quot;</span>, now -&gt; r.flywheel.<span class="cf">stopFlywheelSync</span>()));
+
+    <span class="ck">return</span> <span class="ck">new</span> <span class="cn">SequentialAction</span>(<span class="cs">&quot;autonomous_routine&quot;</span>, sequence.<span class="cf">toArray</span>(<span class="ck">new</span> <span class="cn">Action</span>[0]));
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="ex-panel" id="ex-panel-fetch" role="tabpanel" aria-labelledby="ex-tab-fetch" hidden>
+          <p class="ex-caption"><code>tryOnce</code> contains the damage: if intake times out, the robot still drives off and shoots.</p>
+          <div class="code-window">
+            <div class="code-toolbar">
+              <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+              <span class="code-filename">AutonomyActions.java</span>
+            </div>
+            <pre class="code-body"><code><span class="ck">public</span> <span class="ck">static</span> <span class="cn">Action</span> <span class="cf">fetchAndShootHP2</span>(<span class="cn">Robot</span> r) {
+    <span class="cn">List</span>&lt;<span class="cn">Action</span>&gt; actions = <span class="ck">new</span> <span class="cn">ArrayList</span>&lt;&gt;();
+
+    actions.<span class="cf">add</span>(
+        <span class="cn">ParallelAction</span>.<span class="cf">all</span>(<span class="cs">&quot;hp2_corner_and_prep_harvest&quot;</span>,
+            <span class="cn">DriveActions</span>.<span class="cf">auto_navigateToHP2_Start</span>(r),   <span class="cc">// go to corner</span>
+            <span class="cf">prepareHarvest</span>(r, <span class="cs">&quot;harvest_in_front&quot;</span>)
+        )
+    );
+
+    <span class="cc">// Wrapped in tryOnce so an intake timeout doesn&#x27;t block goShootEm</span>
+    actions.<span class="cf">add</span>(<span class="cn">TryAction</span>.<span class="cf">tryOnce</span>(<span class="cs">&quot;try_hp2_slide_intake&quot;</span>,
+        <span class="cn">ParallelAction</span>.<span class="cf">all</span>(<span class="cs">&quot;HP2_slide_and_intake&quot;</span>,
+            <span class="cn">Nav</span>.<span class="cf">forAuto</span>(<span class="cs">&quot;slide_hp2&quot;</span>, r, <span class="cn">Poses</span>.<span class="cn">Paths</span>.<span class="cf">getHP2SlidePath</span>(r.drive)),
+            <span class="cn">IntakeActions</span>.<span class="cf">smartIntakeStartFresh</span>(r, <span class="ck">true</span>)
+                .<span class="cf">withTimeout</span>(<span class="cn">Poses</span>.<span class="cn">Constraints</span>.<span class="cs">TIMEOUT_INTAKE_FAILED</span>)
+                .<span class="cf">withOnStart</span>(now -&gt; <span class="cn">ULog</span>.<span class="cf">i</span>(<span class="cs">TAG</span>, () -&gt; <span class="cs">&quot;Intaking balls&quot;</span>))
+                .<span class="cf">withOnTimeout</span>(now -&gt; <span class="cn">IntakeActions</span>.<span class="cf">cleanup_after_intake</span>(r))
+        )
+    ));
+
+    actions.<span class="cf">add</span>(<span class="cf">goShootEm</span>(r, <span class="ck">null</span>, <span class="cn">DriveActions</span>.<span class="cf">auto_navigateToShootingFAR</span>(r)));
+    <span class="ck">return</span> <span class="ck">new</span> <span class="cn">SequentialAction</span>(<span class="cs">&quot;fetch_shoot_HP2&quot;</span>, actions.<span class="cf">toArray</span>(<span class="ck">new</span> <span class="cn">Action</span>[0]));
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="ex-panel" id="ex-panel-intake" role="tabpanel" aria-labelledby="ex-tab-intake" hidden>
+          <p class="ex-caption">The payoff feature: <code>.requires()</code> claims INTAKE, TRANSFER and INDEXER. If any other action asks for one of them, the runner cancels this one and <code>.withOnCancel()</code> leaves the hardware in a safe state — no manual bookkeeping.</p>
+          <div class="code-window">
+            <div class="code-toolbar">
+              <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+              <span class="code-filename">IntakeActions.java</span>
+            </div>
+            <pre class="code-body"><code><span class="ck">public</span> <span class="ck">static</span> <span class="cn">Action</span> <span class="cf">smartIntakeStartFresh</span>(<span class="cn">Robot</span> r, <span class="ck">boolean</span> leaveIntakeON) {
+    <span class="cn">SequentialAction</span> seq = <span class="ck">new</span> <span class="cn">SequentialAction</span>(<span class="cs">&quot;smart_intake&quot;</span>);
+
+    seq.<span class="cf">then</span>(<span class="cn">Action</span>.<span class="cf">oneShot</span>(<span class="cs">&quot;trigger_distance_detectors&quot;</span>, now -&gt; r.indexer.<span class="cf">scanForBalls</span>(<span class="ck">true</span>)));
+    seq.<span class="cf">then</span>(<span class="cn">Action</span>.<span class="cf">oneShot</span>(<span class="cs">&quot;close_gates_no_wait&quot;</span>, now -&gt; r.indexer.<span class="cf">setServoPositionAll</span>(<span class="cs">GATE_INTAKE_POSITION</span>)));
+    seq.<span class="cf">then</span>(<span class="cn">Action</span>.<span class="cf">oneShot</span>(<span class="cs">&quot;lock_transfer&quot;</span>, now -&gt; r.transfer.<span class="cf">lock</span>()));
+
+    seq.<span class="cf">then</span>(<span class="ck">new</span> <span class="cn">ParallelAction</span>(<span class="cs">&quot;intake_and_monitor&quot;</span>,
+        <span class="cn">ParallelAction</span>.<span class="cn">CompletionMode</span>.<span class="cs">ALL</span>,
+        <span class="cn">Action</span>.<span class="cf">oneShot</span>(<span class="cs">&quot;start_intake&quot;</span>, now -&gt; r.intake.<span class="cf">turnOnSync</span>(<span class="ck">false</span>)),
+        <span class="ck">new</span> <span class="cn">SequentialAction</span>(<span class="cs">&quot;intake_and_wait&quot;</span>,
+            <span class="ck">new</span> <span class="cn">WaitUntilAction</span>(<span class="cs">&quot;monitor_balls&quot;</span>, () -&gt; r.indexer.<span class="cf">hasAtLeastOneBall</span>())
+                    .<span class="cf">withTimeout</span>(2000),
+            <span class="cn">TryAction</span>.<span class="cf">tryOnce</span>(<span class="cs">&quot;try_wait_for_last_2_balls&quot;</span>,
+                <span class="ck">new</span> <span class="cn">WaitUntilAction</span>(<span class="cs">&quot;wait_for_last_2_balls&quot;</span>, () -&gt; r.indexer.<span class="cf">areAllBallsDetected</span>())
+                        .<span class="cf">withTimeout</span>(300))
+        )
+    ));
+
+    seq.<span class="cf">then</span>(<span class="cn">Action</span>.<span class="cf">oneShot</span>(<span class="cs">&quot;gulp_gates&quot;</span>, now -&gt; r.indexer.<span class="cf">setServoPositionAll</span>(<span class="cs">GATE_GULP_POSITION</span>)));
+    seq.<span class="cf">then</span>(<span class="cn">Action</span>.<span class="cf">oneShot</span>(<span class="cs">&quot;stop_intake&quot;</span>, now -&gt; <span class="cf">cleanup_after_intake</span>(r, leaveIntakeON)));
+
+    <span class="cc">// Claim the three subsystems this action drives. If anything else asks for</span>
+    <span class="cc">// them, the runner cancels this action and withOnCancel puts hardware back.</span>
+    <span class="ck">return</span> seq
+            .<span class="cf">requires</span>(<span class="cn">ActionSlot</span>.<span class="cs">INTAKE</span>)
+            .<span class="cf">requires</span>(<span class="cn">ActionSlot</span>.<span class="cs">TRANSFER</span>)
+            .<span class="cf">requires</span>(<span class="cn">ActionSlot</span>.<span class="cs">INDEXER</span>)
+            .<span class="cf">withOnCancel</span>(now -&gt; <span class="cf">cleanup_after_intake</span>(r, leaveIntakeON));
+}</code></pre>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
