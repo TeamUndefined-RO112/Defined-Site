@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Defined — Action Scheduling Engine for FTC</title>
+  <meta name="description" content="Defined is a lightweight action-scheduling engine built for FTC. Composable actions, structured robot lifecycle, conflict-safe scheduling, and performance tools out of the box." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─── PARTICLE CANVAS ─── -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <!-- ─── NAVBAR ─── -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" id="nav-logo-link">
+        <span class="logo-bracket">[</span>Defined<span class="logo-bracket">]</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features"   class="nav-link">Features</a>
+        <a href="#actions"    class="nav-link">Actions</a>
+        <a href="#utilities"  class="nav-link">Utilities</a>
+        <a href="#setup"      class="nav-link">Setup</a>
+        <a href="https://github.com/Stfy-y/defined-quickstart" target="_blank" rel="noopener" class="btn btn-outline btn-sm" id="nav-github-btn">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          GitHub
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#features"  class="mobile-link">Features</a>
+    <a href="#actions"   class="mobile-link">Actions</a>
+    <a href="#utilities" class="mobile-link">Utilities</a>
+    <a href="#setup"     class="mobile-link">Setup</a>
+    <a href="https://github.com/Stfy-y/defined-quickstart" target="_blank" rel="noopener" class="mobile-link mobile-link-accent">View on GitHub →</a>
+  </div>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero" id="hero">
+
+    <div class="container hero-content">
+      <div class="badge" id="hero-badge">
+        <span class="badge-dot"></span>
+        Team Undefined &nbsp;·&nbsp; #19112 &nbsp;·&nbsp; v0.2.1
+      </div>
+
+      <h1 class="hero-title" id="hero-title">
+        <span class="word-defined">Defined</span><span class="hero-dot">.</span>
+      </h1>
+
+      <p class="hero-sub" id="hero-sub">
+        Stop writing tangled <strong>OpMode</strong> loops.<br />
+        Defined gives your FTC robot a real action architecture —<br class="hero-br" />
+        composable, cancellable, and conflict-safe by design.
+      </p>
+
+      <div class="hero-actions" id="hero-actions">
+        <a href="https://github.com/Stfy-y/defined-quickstart" target="_blank" rel="noopener" class="btn btn-primary btn-lg" id="hero-github-btn">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          Get Quickstart
+        </a>
+        <a href="https://github.com/cstahie/defined" target="_blank" rel="noopener" class="btn btn-ghost btn-lg" id="hero-core-btn">
+          View Core Library →
+        </a>
+      </div>
+
+      <!-- Live dependency badge -->
+      <div class="dep-badge" id="dep-badge">
+        <span class="dep-label">implementation</span>
+        <span class="dep-value">"com.teamundefined:defined-core:<span class="dep-version">0.2.1</span>"</span>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ─── WHAT IS DEFINED ─── -->
+  <section class="what-section" id="what">
+    <div class="container">
+      <div class="section-label">Overview</div>
+      <h2 class="section-title">What is <span class="accent">Defined</span>?</h2>
+      <p class="section-desc">
+        A getting-started template and action engine for FTC teams. Defined gives your robot code structure, safety, and composability — so you spend less time debugging loops and more time winning matches.
+      </p>
+
+      <div class="pillars">
+        <div class="pillar" id="pillar-1">
+          <span class="pillar-number">01</span>
+          <div>
+            <strong class="pillar-head">Action System</strong>
+            <span class="pillar-text">Composable units of work — one-shot, sequential, parallel, or conditional — that can require exclusive access to subsystems.</span>
+          </div>
+        </div>
+        <div class="pillar" id="pillar-2">
+          <span class="pillar-number">02</span>
+          <div>
+            <strong class="pillar-head">Robot Lifecycle</strong>
+            <span class="pillar-text">Structured hooks for init, start, loop, and stop phases so your code runs at the right time, every time.</span>
+          </div>
+        </div>
+        <div class="pillar" id="pillar-3">
+          <span class="pillar-number">03</span>
+          <div>
+            <strong class="pillar-head">Action Runner</strong>
+            <span class="pillar-text">Manages scheduling, cancellation, and slot-based conflict resolution so two actions never fight over the same motor.</span>
+          </div>
+        </div>
+        <div class="pillar" id="pillar-4">
+          <span class="pillar-number">04</span>
+          <div>
+            <strong class="pillar-head">Performance Tools</strong>
+            <span class="pillar-text">Section profiling, system monitoring, I2C scheduling, and background-threaded telemetry out of the box.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FEATURES ─── -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-label">Core Features</div>
+      <h2 class="section-title">Everything you need,<br /><span class="accent">nothing you don't</span></h2>
+
+      <div class="features-grid">
+
+        <div class="feature-card" id="feat-1">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v3m0 3v.01M17.5 17h3m-6 0h.01"/></svg>
+          </div>
+          <h3 class="feature-title">Composable Actions</h3>
+          <p class="feature-desc">
+            Chain one-shot, sequential, parallel, conditional, toggle, and while-pressed actions into any behavior your robot needs. Each action declares which subsystem slots it owns.
+          </p>
+          <div class="feature-tags">
+            <span class="tag">one-shot</span>
+            <span class="tag">sequential</span>
+            <span class="tag">parallel</span>
+            <span class="tag">toggle</span>
+            <span class="tag">conditional</span>
+          </div>
+        </div>
+
+        <div class="feature-card" id="feat-2">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          </div>
+          <h3 class="feature-title">Robot Lifecycle</h3>
+          <p class="feature-desc">
+            Override clean hooks — <code>init()</code>, <code>initUpdate()</code>, <code>start()</code>, <code>preUpdate()</code>, <code>update()</code>, <code>stop()</code> — and let the base class call them at exactly the right moment.
+          </p>
+          <div class="feature-tags">
+            <span class="tag">init</span>
+            <span class="tag">start</span>
+            <span class="tag">loop</span>
+            <span class="tag">stop</span>
+          </div>
+        </div>
+
+        <div class="feature-card" id="feat-3">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M4 12h16M4 18h7"/><path d="M15 15l2 2 4-4"/></svg>
+          </div>
+          <h3 class="feature-title">Slot Conflict Resolution</h3>
+          <p class="feature-desc">
+            The <code>ActionRunner</code> automatically cancels any running action when a new action requests the same subsystem slot. No manual tracking — declare <code>.requires(Subsystem.INTAKE)</code> and the runner handles the rest.
+          </p>
+          <div class="feature-tags">
+            <span class="tag">scheduling</span>
+            <span class="tag">cancellation</span>
+            <span class="tag">slot locks</span>
+          </div>
+        </div>
+
+        <div class="feature-card" id="feat-4">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3 class="feature-title">Performance Tools</h3>
+          <p class="feature-desc">
+            <code>SectionProfiler</code> tracks per-cycle timings. <code>SystemMonitor</code> watches CPU and loop time. <code>HardwareScheduler</code> staggers I2C reads. <code>TelemetrySnapshot</code> formats telemetry on a background thread.
+          </p>
+          <div class="feature-tags">
+            <span class="tag">profiling</span>
+            <span class="tag">I2C</span>
+            <span class="tag">telemetry</span>
+            <span class="tag">monitoring</span>
+          </div>
+        </div>
+
+        <div class="feature-card" id="feat-5">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <h3 class="feature-title">Central Config</h3>
+          <p class="feature-desc">
+            Every tunable parameter lives in one <code>Config.java</code>. The <code>@Configurable</code> annotation exposes fields to the Panels dashboard for live tuning — change values without uploading new code.
+          </p>
+          <div class="feature-tags">
+            <span class="tag">live tuning</span>
+            <span class="tag">@Configurable</span>
+            <span class="tag">one place</span>
+          </div>
+        </div>
+
+        <div class="feature-card" id="feat-6">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+          </div>
+          <h3 class="feature-title">Pre-Start Menu</h3>
+          <p class="feature-desc">
+            An interactive menu on the Driver Station during INIT — select alliance color, toggle debug flags, and configure match settings without touching code. Changes take effect when you press START.
+          </p>
+          <div class="feature-tags">
+            <span class="tag">driver station</span>
+            <span class="tag">alliance color</span>
+            <span class="tag">no re-upload</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ACTIONS SHOWCASE ─── -->
+  <section class="actions-section" id="actions">
+    <div class="container">
+      <div class="section-label">Building Actions</div>
+      <h2 class="section-title">Seven action types.<br /><span class="accent">Infinite possibilities.</span></h2>
+      <p class="section-desc">Mix and match these primitives to build any robot behavior — from a simple button press to a full multi-subsystem autonomous sequence.</p>
+
+      <div class="action-tabs-wrap">
+        <div class="action-tabs" id="action-tabs" role="tablist">
+          <button class="atab active" data-tab="oneshot"     role="tab">One-Shot</button>
+          <button class="atab"        data-tab="conditional" role="tab">Conditional</button>
+          <button class="atab"        data-tab="toggle"      role="tab">Toggle</button>
+          <button class="atab"        data-tab="whilepress"  role="tab">While-Pressed</button>
+          <button class="atab"        data-tab="sequential"  role="tab">Sequential</button>
+          <button class="atab"        data-tab="parallel"    role="tab">Parallel</button>
+          <button class="atab"        data-tab="compose"     role="tab">Compose</button>
+        </div>
+
+        <div class="action-panels">
+
+          <div class="action-panel active" id="tab-oneshot">
+            <div class="ap-desc">
+              <h3>One-Shot Actions</h3>
+              <p>Run a single lambda <strong>once</strong> and complete immediately. Perfect for setting servo positions, toggling motor power, or any instantaneous state change.</p>
+            </div>
+            <div class="code-window">
+              <div class="code-toolbar">
+                <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+                <span class="code-filename">IntakeActions.java</span>
+              </div>
+              <pre class="code-body"><code><span class="ck">public static</span> <span class="cn">Action</span> <span class="cf">startIntake</span>(<span class="cn">Robot</span> r, <span class="ck">boolean</span> reversed) {
+    <span class="ck">return</span> <span class="cn">Action</span>.<span class="cf">oneShot</span>(<span class="cs">"intake_start"</span>, now <span class="ck">-></span> r.intake.<span class="cf">start</span>(reversed));
+}
+
+<span class="ck">public static</span> <span class="cn">Action</span> <span class="cf">stopIntake</span>(<span class="cn">Robot</span> r) {
+    <span class="ck">return</span> <span class="cn">Action</span>.<span class="cf">oneShot</span>(<span class="cs">"intake_stop"</span>, now <span class="ck">-></span> r.intake.<span class="cf">stop</span>());
+}</code></pre>
+            </div>
+          </div>
+
+          <div class="action-panel" id="tab-conditional">
+            <div class="ap-desc">
+              <h3>Conditional Actions</h3>
+              <p>Run every cycle <strong>until</strong> a condition is met. Attach <code>.withOnCancel()</code> for cleanup if interrupted before the condition fires.</p>
+            </div>
+            <div class="code-window">
+              <div class="code-toolbar">
+                <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+                <span class="code-filename">IntakeActions.java</span>
+              </div>
+              <pre class="code-body"><code><span class="cn">Action</span>.<span class="cf">until</span>(<span class="cs">"manual_intake_on"</span>,
+    now <span class="ck">-></span> r.intake.<span class="cf">start</span>(<span class="ck">false</span>),
+    () <span class="ck">-></span> <span class="ck">false</span>   <span class="cc">// runs until cancelled</span>
+)
+.<span class="cf">requires</span>(<span class="cn">Subsystem</span>.INTAKE)
+.<span class="cf">withOnCancel</span>(now <span class="ck">-></span> r.intake.<span class="cf">stop</span>());</code></pre>
+            </div>
+          </div>
+
+          <div class="action-panel" id="tab-toggle">
+            <div class="ap-desc">
+              <h3>Toggle Actions</h3>
+              <p>Alternate between two actions each time a button is pressed. Register as a <strong>monitor</strong> — the runner checks it every cycle automatically.</p>
+            </div>
+            <div class="code-window">
+              <div class="code-toolbar">
+                <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+                <span class="code-filename">MainTeleOp.java</span>
+              </div>
+              <pre class="code-body"><code>runner.<span class="cf">addMonitor</span>(
+    <span class="cn">ToggleAction</span>.<span class="cf">onPress</span>(
+        <span class="cs">"intake_toggle"</span>,
+        () <span class="ck">-></span> gamepad1.squareWasReleased(),  <span class="cc">// button supplier</span>
+        <span class="cf">startIntake</span>(robot, <span class="ck">false</span>),           <span class="cc">// first press</span>
+        <span class="cf">stopIntake</span>(robot)                   <span class="cc">// second press</span>
+    )
+);</code></pre>
+            </div>
+          </div>
+
+          <div class="action-panel" id="tab-whilepress">
+            <div class="ap-desc">
+              <h3>While-Pressed Actions</h3>
+              <p>Run an action while a button is held, then automatically run a cleanup action on release. Suppliers return fresh instances each press cycle.</p>
+            </div>
+            <div class="code-window">
+              <div class="code-toolbar">
+                <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+                <span class="code-filename">MainTeleOp.java</span>
+              </div>
+              <pre class="code-body"><code>runner.<span class="cf">addMonitor</span>(<span class="ck">new</span> <span class="cn">WhilePressedAction</span>(
+    <span class="cs">"manual_intake"</span>,
+    () <span class="ck">-></span> gamepad1.right_trigger_pressed,
+    runner,
+    () <span class="ck">-></span> <span class="cf">startIntake</span>(robot, <span class="ck">false</span>).<span class="cf">requires</span>(<span class="cn">Subsystem</span>.INTAKE),
+    () <span class="ck">-></span> <span class="cf">stopIntake</span>(robot).<span class="cf">requires</span>(<span class="cn">Subsystem</span>.INTAKE)
+));</code></pre>
+            </div>
+          </div>
+
+          <div class="action-panel" id="tab-sequential">
+            <div class="ap-desc">
+              <h3>Sequential Actions</h3>
+              <p>Run a list of actions <strong>one after another</strong>. Each child action must complete before the next one starts.</p>
+            </div>
+            <div class="code-window">
+              <div class="code-toolbar">
+                <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+                <span class="code-filename">OuttakeActions.java</span>
+              </div>
+              <pre class="code-body"><code><span class="ck">return new</span> <span class="cn">SequentialAction</span>(<span class="cs">"dump_and_retract"</span>, <span class="cn">List</span>.of(
+    <span class="cn">Action</span>.<span class="cf">oneShot</span>(<span class="cs">"dump"</span>,      now <span class="ck">-></span> r.outtake.<span class="cf">dump</span>()),
+    <span class="cn">WaitAction</span>.<span class="cf">ms</span>(<span class="cs">"wait"</span>, <span class="cs">500</span>),
+    <span class="cn">Action</span>.<span class="cf">oneShot</span>(<span class="cs">"home"</span>,      now <span class="ck">-></span> r.outtake.<span class="cf">home</span>()),
+    <span class="cn">Action</span>.<span class="cf">oneShot</span>(<span class="cs">"retract"</span>,   now <span class="ck">-></span> r.outtake.<span class="cf">retract</span>())
+)).<span class="cf">requires</span>(<span class="cn">Subsystem</span>.OUTTAKE);</code></pre>
+            </div>
+          </div>
+
+          <div class="action-panel" id="tab-parallel">
+            <div class="ap-desc">
+              <h3>Parallel Actions</h3>
+              <p><code>ParallelAction.all()</code> runs multiple actions simultaneously and completes when <strong>all</strong> children are done — great for multi-mechanism moves.</p>
+            </div>
+            <div class="code-window">
+              <div class="code-toolbar">
+                <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+                <span class="code-filename">ShootingActions.java</span>
+              </div>
+              <pre class="code-body"><code><span class="cn">ParallelAction</span>.<span class="cf">all</span>(<span class="cs">"parallel_start"</span>,
+    <span class="cn">IntakeActions</span>.<span class="cf">startIntake</span>(r, <span class="ck">false</span>),
+    <span class="cn">TransferActions</span>.<span class="cf">startTransfer</span>(r),
+    <span class="cn">TransferActions</span>.<span class="cf">unlockTransfer</span>(r)
+);</code></pre>
+            </div>
+          </div>
+
+          <div class="action-panel" id="tab-compose">
+            <div class="ap-desc">
+              <h3>Composing Complex Sequences</h3>
+              <p>Real match behaviors combine all types. Here's the full shooting sequence — sequential steps wrapping parallel groups, with a timeout and slot requirements on the whole thing.</p>
+            </div>
+            <div class="code-window">
+              <div class="code-toolbar">
+                <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+                <span class="code-filename">ShootingActions.java</span>
+              </div>
+              <pre class="code-body"><code><span class="ck">public static</span> <span class="cn">Action</span> <span class="cf">shootingSequence</span>(<span class="cn">Robot</span> r) {
+    <span class="cn">List</span>&lt;<span class="cn">Action</span>&gt; steps = <span class="ck">new</span> <span class="cn">ArrayList</span>&lt;&gt;();
+
+    steps.<span class="cf">add</span>(<span class="cn">FlywheelActions</span>.<span class="cf">flywheelSpinUp</span>(r));
+
+    steps.<span class="cf">add</span>(<span class="cn">ParallelAction</span>.<span class="cf">all</span>(<span class="cs">"start"</span>,
+        <span class="cn">IntakeActions</span>.<span class="cf">startIntake</span>(r, <span class="ck">false</span>),
+        <span class="cn">TransferActions</span>.<span class="cf">startTransfer</span>(r),
+        <span class="cn">TransferActions</span>.<span class="cf">unlockTransfer</span>(r)));
+
+    steps.<span class="cf">add</span>(<span class="cn">WaitUntilAction</span>.<span class="cf">until</span>(<span class="cs">"wait_exit"</span>, r::<span class="cf">noBallsDetected</span>));
+    steps.<span class="cf">add</span>(<span class="cn">WaitAction</span>.<span class="cf">ms</span>(<span class="cs">"delay"</span>, <span class="cn">Config</span>.Time.BALLS_EXIT_DELAY));
+
+    steps.<span class="cf">add</span>(<span class="cn">ParallelAction</span>.<span class="cf">all</span>(<span class="cs">"stop"</span>,
+        <span class="cn">IntakeActions</span>.<span class="cf">stopIntake</span>(r),
+        <span class="cn">TransferActions</span>.<span class="cf">stopTransfer</span>(r),
+        <span class="cn">TransferActions</span>.<span class="cf">lockTransfer</span>(r)));
+
+    <span class="ck">return new</span> <span class="cn">SequentialAction</span>(<span class="cs">"shooting_sequence"</span>, steps)
+        .<span class="cf">withTimeout</span>(<span class="cn">Config</span>.Time.SHOOTING_TIMEOUT)
+        .<span class="cf">requires</span>(<span class="cn">Subsystem</span>.DRIVE, <span class="cn">Subsystem</span>.INTAKE);
+}</code></pre>
+            </div>
+          </div>
+
+        </div><!-- /action-panels -->
+      </div><!-- /action-tabs-wrap -->
+    </div>
+  </section>
+
+  <!-- ─── UTILITIES ─── -->
+  <section class="utilities-section" id="utilities">
+    <div class="container">
+      <div class="section-label">Built-in Utilities</div>
+      <h2 class="section-title">Performance tools,<br /><span class="accent">out of the box</span></h2>
+
+      <div class="util-grid">
+        <div class="util-card" id="util-1">
+          <div class="util-header">
+            <div class="util-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+            </div>
+            <h3 class="util-title">SectionProfiler</h3>
+          </div>
+          <p class="util-desc">Measures how long specific code sections take per cycle. Wrap any block to find performance bottlenecks with formatted per-section stats in telemetry.</p>
+          <div class="util-snippet"><code><span class="ck">profiler</span>.<span class="cf">start</span>(Section.PRE_UPDATE);<br><span class="cc">// ... code to profile ...</span><br><span class="ck">profiler</span>.<span class="cf">start</span>(Section.SUBSYSTEMS);</code></div>
+        </div>
+
+        <div class="util-card" id="util-2">
+          <div class="util-header">
+            <div class="util-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>
+            </div>
+            <h3 class="util-title">SystemMonitor</h3>
+          </div>
+          <p class="util-desc">Tracks cycle time, CPU usage, and other system-level metrics. Supports a smoothing factor and can be toggled via a Config flag without code re-upload.</p>
+          <div class="util-snippet"><code><span class="ck">new</span> <span class="cn">SystemMonitor</span>(<span class="cs">0.8</span>);<br><span class="cf">addCpu</span>(systemMonitor);<br>systemMonitor.<span class="cf">enabledWhen</span>(() <span class="ck">-></span> Config.Debug.ACTIVE);</code></div>
+        </div>
+
+        <div class="util-card" id="util-3">
+          <div class="util-header">
+            <div class="util-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            </div>
+            <h3 class="util-title">HardwareScheduler</h3>
+          </div>
+          <p class="util-desc">Staggers I2C reads across multiple loops to prevent bus congestion. Register sensors with a per-sensor update interval — reads one at a time, on a configurable schedule.</p>
+          <div class="util-snippet"><code>hardware.<span class="cf">register</span>(<br>&nbsp;&nbsp;Read.INTAKE_CURRENT,<br>&nbsp;&nbsp;Config.Intervals.CURRENT_MS,<br>&nbsp;&nbsp;() <span class="ck">-></span> intake.<span class="cf">getCurrent</span>()<br>);</code></div>
+        </div>
+
+        <div class="util-card" id="util-4">
+          <div class="util-header">
+            <div class="util-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <h3 class="util-title">TelemetrySnapshot</h3>
+          </div>
+          <p class="util-desc">Telemetry data is formatted on a <strong>background thread</strong> so it never slows your main loop. Override <code>fillSnapshot()</code> to add values — refresh rate is configurable.</p>
+          <div class="util-snippet"><code>snapshot.<span class="cf">put</span>(<span class="cs">"Intake"</span>, intake.<span class="cf">isPowered</span>());<br>snapshot.<span class="cf">putDouble</span>(<span class="cs">"Amps"</span>, amps, <span class="cs">2</span>);<br>snapshot.<span class="cf">put</span>(<span class="cs">"CPU"</span>, monitor.<span class="cf">getStats</span>());</code></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SETUP ─── -->
+  <section class="setup-section" id="setup">
+    <div class="container">
+      <div class="section-label">Get Started</div>
+      <h2 class="section-title">Up and running<br /><span class="accent">in three steps</span></h2>
+
+      <div class="steps">
+        <div class="step" id="step-1">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3 class="step-title">Add the Maven dependency</h3>
+            <p class="step-desc">In your <code>TeamCode/build.gradle</code>, add the Defined repository and the packages you need.</p>
+            <div class="code-window">
+              <div class="code-toolbar">
+                <div class="code-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+                <span class="code-filename">build.gradle</span>
+              </div>
+              <pre class="code-body"><code><span class="cf">repositories</span> {
+    maven { url <span class="cs">'https://cstahie.github.io/defined'</span> }
+}
+<span class="cf">dependencies</span> {
+    implementation <span class="cs">"com.teamundefined:defined-core:0.2.1"</span>
+    implementation <span class="cs">"com.teamundefined:defined-ftc:0.2.1"</span>    <span class="cc">// FTC glue</span>
+    implementation <span class="cs">"com.teamundefined:defined-pedro:0.2.1"</span>  <span class="cc">// Pedro actions</span>
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step" id="step-2">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3 class="step-title">Sync Gradle &amp; copy the quickstart</h3>
+            <p class="step-desc">Sync your project in Android Studio, then clone or copy the files from the quickstart repository into your <code>TeamCode</code> module.</p>
+            <div class="step-action-row">
+              <a href="https://github.com/Stfy-y/defined-quickstart" target="_blank" rel="noopener" class="btn btn-primary" id="step-quickstart-btn">
+                <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                Clone Quickstart
+              </a>
+              <a href="https://github.com/cstahie/defined" target="_blank" rel="noopener" class="btn btn-outline" id="step-core-btn">
+                View Core Library
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="step" id="step-3">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3 class="step-title">Replace example subsystems with your hardware</h3>
+            <p class="step-desc">Follow the six-step pattern for every new mechanism: add a slot → add config → create the subsystem class → register in Robot → create actions → wire in OpMode. The pattern stays the same whether you have two mechanisms or twelve.</p>
+            <div class="mechsteps">
+              <span class="mstep">1. Subsystem slot</span>
+              <span class="mstep-arrow">→</span>
+              <span class="mstep">2. Config values</span>
+              <span class="mstep-arrow">→</span>
+              <span class="mstep">3. Subsystem class</span>
+              <span class="mstep-arrow">→</span>
+              <span class="mstep">4. Register in Robot</span>
+              <span class="mstep-arrow">→</span>
+              <span class="mstep">5. Create actions</span>
+              <span class="mstep-arrow">→</span>
+              <span class="mstep">6. Wire in OpMode</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ─── -->
+  <section class="cta-section" id="cta">
+    <div class="container cta-container">
+      <div class="cta-glow"></div>
+      <div class="section-label">Open Source · v0.2.1</div>
+      <h2 class="cta-title">Ready to get <span class="accent">started</span>?</h2>
+      <p class="cta-desc">
+        Defined is open-source and free to use. Grab the quickstart, read the code, and adapt it to your team's hardware.
+      </p>
+      <div class="cta-btns">
+        <a href="https://github.com/Stfy-y/defined-quickstart" target="_blank" rel="noopener" class="btn btn-primary btn-xl" id="cta-quickstart-btn">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          Get Quickstart
+        </a>
+        <a href="https://github.com/cstahie/defined/tree/main/docs" target="_blank" rel="noopener" class="btn btn-ghost btn-xl" id="cta-docs-btn">
+          Read the Docs →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer class="footer" id="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="logo-bracket">[</span>Defined<span class="logo-bracket">]</span>
+        <span class="footer-version">v0.2.1</span>
+      </div>
+      <p class="footer-team">Built by <strong>Team Undefined</strong> &nbsp;·&nbsp; #19112</p>
+      <div class="footer-links">
+        <a href="https://github.com/Stfy-y/defined-quickstart" target="_blank" rel="noopener" class="footer-link" id="footer-quickstart-link">Quickstart</a>
+        <span class="footer-sep">·</span>
+        <a href="https://github.com/cstahie/defined" target="_blank" rel="noopener" class="footer-link" id="footer-core-link">Core Library</a>
+        <span class="footer-sep">·</span>
+        <a href="https://github.com/cstahie/defined/tree/main/docs" target="_blank" rel="noopener" class="footer-link" id="footer-docs-link">Docs</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
