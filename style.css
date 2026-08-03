@@ -1248,6 +1248,24 @@ code {
 .footer-link:hover { color: var(--green); }
 .footer-sep { color: var(--text-muted); font-size: 0.75rem; }
 
+/* Team Undefined links — hero badge + footer. Inherit each context's colour
+   so they blend in, and only reveal themselves on hover. */
+.team-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+}
+.team-link:hover {
+  color: var(--green);
+  border-bottom-color: var(--green);
+}
+.team-link:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
 /* ─────────────────────────────────────────────────
    ANIMATIONS
 ───────────────────────────────────────────────── */
