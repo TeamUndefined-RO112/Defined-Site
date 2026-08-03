@@ -822,6 +822,87 @@ code {
 }
 
 /* ─────────────────────────────────────────────────
+   SPREAD THE WORD
+───────────────────────────────────────────────── */
+.share-section {
+  padding: 100px 0;
+  border-top: 1px solid var(--border);
+}
+.share-container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+.share-title {
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.share-desc {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 460px;
+  line-height: 1.7;
+}
+.share-btns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.share-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--green);
+  background: var(--green-deep);
+  transform: translateY(-1px);
+}
+.share-btn .icon { opacity: 0.75; transition: opacity var(--transition); }
+.share-btn:hover .icon { opacity: 1; }
+
+/* Copy button flips green once the link is on the clipboard */
+.share-btn-copy.copied {
+  color: var(--green);
+  border-color: var(--green);
+  background: var(--green-deep);
+}
+
+.share-native { margin-top: 4px; }
+
+.share-url {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  margin-top: 4px;
+}
+
+@media (max-width: 640px) {
+  .share-section { padding: 72px 0; }
+  .share-btns { gap: 8px; }
+  .share-btn { padding: 9px 14px; font-size: 0.82rem; }
+}
+
+/* ─────────────────────────────────────────────────
    FOOTER
 ───────────────────────────────────────────────── */
 .footer {

@@ -279,6 +279,108 @@ document.querySelectorAll('.step').forEach((el, i) => {
 
 
 /* ═══════════════════════════════════════════════
+   SPREAD THE WORD
+   • Copy link  → clipboard + "Copied!" confirmation
+   • Share      → native share sheet, phones only
+═══════════════════════════════════════════════ */
+(function () {
+  const SHARE_URL   = 'https://defined.teamundefined.com/';
+  const SHARE_TITLE = 'Defined — Action Scheduling Engine for FTC';
+  const SHARE_TEXT  = 'A lightweight action-scheduling engine for FTC robots, built by Team Undefined #19112';
+
+  // Instagram captions can't hold clickable links, so we point people at the bio
+  const IG_CAPTION =
+    'Defined — a lightweight action-scheduling engine for FTC robots 🤖\n' +
+    'Composable actions, conflict-safe scheduling, built-in performance tools.\n\n' +
+    'Built by Team Undefined #19112\n' +
+    'Link in bio → defined.teamundefined.com\n\n' +
+    '#FTC #FIRSTRobotics #OmegaBots #Robotics #TeamUndefined';
+
+  /* ── Copy text to clipboard, with a fallback for non-HTTPS pages ── */
+  async function copyToClipboard(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      // Clipboard API needs HTTPS and can be blocked — fall back to a hidden textarea
+      const scratch = document.createElement('textarea');
+      scratch.value = text;
+      scratch.setAttribute('readonly', '');
+      scratch.style.position = 'absolute';
+      scratch.style.left = '-9999px';
+      document.body.appendChild(scratch);
+      scratch.select();
+      document.execCommand('copy');
+      document.body.removeChild(scratch);
+    }
+  }
+
+  /* ── Flash a confirmation message on a button, then restore it ── */
+  const flashTimers = new WeakMap();
+
+  function flashLabel(btn, labelEl, message, original) {
+    labelEl.textContent = message;
+    btn.classList.add('copied');
+
+    clearTimeout(flashTimers.get(btn));
+    flashTimers.set(btn, setTimeout(() => {
+      labelEl.textContent = original;
+      btn.classList.remove('copied');
+    }, 2200));
+  }
+
+  /* ── Copy link ── */
+  const copyBtn   = document.getElementById('share-copy');
+  const copyLabel = document.getElementById('share-copy-label');
+
+  if (copyBtn && copyLabel) {
+    copyBtn.addEventListener('click', async () => {
+      await copyToClipboard(SHARE_URL);
+      flashLabel(copyBtn, copyLabel, 'Copied!', 'Copy link');
+    });
+  }
+
+  /* ── Instagram ──
+     Instagram has no web share intent, so we do the next best thing:
+     • Phone  → open the native share sheet, which lists Instagram directly
+     • Laptop → copy a ready-made caption and open Instagram in a new tab   */
+  const igBtn   = document.getElementById('share-instagram');
+  const igLabel = document.getElementById('share-instagram-label');
+
+  if (igBtn && igLabel) {
+    igBtn.addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: SHARE_TITLE, text: SHARE_TEXT, url: SHARE_URL });
+          return;
+        } catch (err) {
+          // Share sheet dismissed — fall through to the copy behaviour below
+          return;
+        }
+      }
+
+      await copyToClipboard(IG_CAPTION);
+      flashLabel(igBtn, igLabel, 'Caption copied!', 'Instagram');
+      window.open('https://www.instagram.com/', '_blank', 'noopener');
+    });
+  }
+
+  /* ── Native share sheet (only exists on phones/tablets) ── */
+  const nativeBtn = document.getElementById('share-native');
+
+  if (nativeBtn && navigator.share) {
+    nativeBtn.hidden = false;
+    nativeBtn.addEventListener('click', async () => {
+      try {
+        await navigator.share({ title: SHARE_TITLE, text: SHARE_TEXT, url: SHARE_URL });
+      } catch (err) {
+        // User dismissed the share sheet — nothing to do
+      }
+    });
+  }
+})();
+
+
+/* ═══════════════════════════════════════════════
    SMOOTH SCROLL for anchor links
 ═══════════════════════════════════════════════ */
 document.querySelectorAll('a[href^="#"]').forEach(link => {
